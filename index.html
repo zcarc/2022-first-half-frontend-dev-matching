@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <title>2022 FE 데브매칭</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <main class="App">
+        <div class="SelectedLanguage">
+            <ul>
+                <li>JavaScript</li>
+                <li>Python</li>
+                <li>Elixir</li>
+                <li>Java</li>
+                <li>PHP</li>
+            </ul>
+        </div>
+        <form class="SearchInput">
+            <input class="SearchInput__input" type="text" placeholder="프로그램 언어를 입력하세요.">
+        </form>
+        <!-- 
+        <div class="Suggestion">
+            <ul>
+                <li class="Suggestion__item--selected">Action<span class="Suggestion__item--matched">Script</span></li>
+                <li>Java<span class="Suggestion__item--matched">Script</span></li>
+                <li>Type<span class="Suggestion__item--matched">Script</span></li>
+                <li>Pure<span class="Suggestion__item--matched">Script</span></li>
+            </ul>
+        </div> 
+        -->
+    </main>
+    <script>
+
+        const api = 'https://wr4a6p937i.execute-api.ap-northeast-2.amazonaws.com/dev'
+        const input = document.querySelector(".SearchInput__input")
+        const App = document.querySelector('.App')
+        const Suggestion = document.createElement('div')
+        Suggestion.classList.add('Suggestion')
+
+        // 자식노드 삭제 함수
+        const remove_child_elements = () => {
+            if (Suggestion.childNodes.length > 0 && Suggestion.childNodes[0].nodeName.toLowerCase() === 'ul') {
+                Suggestion.removeChild(Suggestion.firstChild)
+            }
+            if (App.contains(Suggestion)) {
+                App.removeChild(Suggestion)
+            }
+        }
+
+        input.addEventListener('input', function(event) {
+            console.log('인풋 이벤트 발생... input: ', input);
+            console.log('인풋 값 가져오기... input.value: ', input.value);
+            // 인풋에 값이 존재하는 경우 API로 검색
+            if (input.value) {
+                console.log('인풋에 값이 존재합니다.')
+                fetch(`${api}/languages?keyword=${input.value}`)
+                .then(res => res.json())
+                .then(res => {
+                    remove_child_elements()
+                    if (res.length > 0) {
+                        console.log('API에서 검색 값을 찾았습니다: ', res)
+                        App.append(Suggestion)
+                        const ul = document.createElement('ul')
+                        Suggestion.append(ul)
+                        res.forEach((item) => {
+                            console.log('item: ', item)
+                            const li = document.createElement('li')
+                            li.innerText = item
+                            ul.append(li)
+                        })
+                    } else {
+                        console.log('API에서 검색 값을 찾지 못했습니다.')
+                    }
+                })
+                .catch(error => console.error(error))
+            // 인풋에 값이 없는 경우
+            } else { 
+                remove_child_elements()
+            }
+            
+        })
+    </script>
+</body>
+
+</html>
