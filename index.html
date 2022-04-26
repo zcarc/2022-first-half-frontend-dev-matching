@@ -38,7 +38,7 @@
         const Suggestion = document.createElement('div')
         Suggestion.classList.add('Suggestion')
 
-        // 자식노드 삭제 함수
+        // 자식노드 삭제 함수 (Suggestion, ul)
         const remove_child_elements = () => {
             if (Suggestion.childNodes.length > 0 && Suggestion.childNodes[0].nodeName.toLowerCase() === 'ul') {
                 Suggestion.removeChild(Suggestion.firstChild)
@@ -48,6 +48,58 @@
             }
         }
 
+        // 키보드 눌렀을 경우(keydown) 이벤트
+        window.addEventListener('keydown', function(event) {
+            const key = event.key
+            if (key === 'ArrowUp' || key === 'ArrowDown') {
+                console.log(key)
+                // Suggestion의 자식노드가 있을 경우
+                if (Suggestion.hasChildNodes()) {
+                    let ul = Suggestion.firstChild
+                    // ul에 자식노드가 있을 경우
+                    if (ul.hasChildNodes()) {
+                        // selected 클래스가 있는 자식노드 li를 찾기 위해서 순회
+                        for (let i = 0; i < ul.childNodes.length; i++) {
+                            const childNode = ul.childNodes[i]
+                            const selected_class_name = 'Suggestion__item--selected'
+                            // selected 클래스가 있는 노드일 경우
+                            if (childNode.className === selected_class_name) {
+                                // 자식노드가 1개라면 다음 노드를 순회할 필요가 없어서 2개 이상인 경우
+                                if (ul.childNodes.length >= 2) {
+                                    childNode.classList.remove(selected_class_name)
+                                    // 위쪽 방향키일 경우
+                                    if (key === 'ArrowUp') {
+                                        // 이전 노드가 존재한다면 그 노드에 선택 클래스 추가
+                                        if (childNode.previousElementSibling !== null) {
+                                            childNode.previousElementSibling.classList.add(selected_class_name)
+                                        }
+                                        // 이전 노드가 없다면 마지막 노드에 선택 클래스 추가
+                                        else if (childNode.previousElementSibling === null) {
+                                            ul.lastChild.classList.add(selected_class_name)
+                                        }
+                                    }
+                                    // 아래쪽 방향키일 경우
+                                    else if (key === 'ArrowDown') {
+                                        // 다응 노드가 존재한다면 그 노드에 선택 클래스 추가
+                                        if (childNode.nextElementSibling !== null) {
+                                            childNode.nextElementSibling.classList.add(selected_class_name)
+                                        }
+                                        // 다음 노드가 없다면 첫번째 노드에 선택 클래스 추가
+                                        else if (childNode.nextElementSibling === null) {
+                                            ul.firstChild.classList.add(selected_class_name)
+                                        }
+                                    }
+                                }
+                                break
+                            }
+                        }
+
+                    }
+                }
+            }
+        })
+
+        // 인풋 입력 이벤트
         input.addEventListener('input', function(event) {
             console.log('인풋 이벤트 발생... input: ', input);
             console.log('인풋 값 가져오기... input.value: ', input.value);
@@ -57,7 +109,9 @@
                 fetch(`${api}/languages?keyword=${input.value}`)
                 .then(res => res.json())
                 .then(res => {
+                    // li 노드가 누적되어 저장될 수 있으므로 자식노드 전부 삭제
                     remove_child_elements()
+                    // API 검색결과가 1개 이상일 경우
                     if (res.length > 0) {
                         console.log('API에서 검색 값을 찾았습니다: ', res)
                         App.append(Suggestion)
@@ -72,13 +126,15 @@
                             li.innerText = res[i]
                             ul.append(li)
                         }
+                    // API 검색결과가 없을 경우
                     } else {
                         console.log('API에서 검색 값을 찾지 못했습니다.')
                     }
                 })
                 .catch(error => console.error(error))
             // 인풋에 값이 없는 경우
-            } else { 
+            } else {
+                // 검색할 값이 없으므로 전부 삭제
                 remove_child_elements()
             }
             
