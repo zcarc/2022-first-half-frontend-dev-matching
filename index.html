@@ -63,12 +63,15 @@
                         App.append(Suggestion)
                         const ul = document.createElement('ul')
                         Suggestion.append(ul)
-                        res.forEach((item) => {
-                            console.log('item: ', item)
+                        for (i = 0; i < res.length; i++) {
+                            console.log('res[i]', res[i])
                             const li = document.createElement('li')
-                            li.innerText = item
+                            if (i === 0) {
+                                li.classList.add('Suggestion__item--selected')
+                            }
+                            li.innerText = res[i]
                             ul.append(li)
-                        })
+                        }
                     } else {
                         console.log('API에서 검색 값을 찾지 못했습니다.')
                     }
