@@ -7,6 +7,7 @@
 
 <body>
     <main class="App">
+        <!-- 
         <div class="SelectedLanguage">
             <ul>
                 <li>JavaScript</li>
@@ -15,7 +16,11 @@
                 <li>Java</li>
                 <li>PHP</li>
             </ul>
-        </div>
+        </div> 
+        -->
+        <div class="SelectedLanguage">
+            <ul></ul>
+        </div> 
         <form class="SearchInput">
             <input class="SearchInput__input" type="text" placeholder="프로그램 언어를 입력하세요.">
         </form>
@@ -57,7 +62,34 @@
             if (tagName !== 'LI') {
                 return
             }
+            // 클릭한 언어의 문자열만 alert으로 띄우기
             alert(target.innerText)
+
+            // 클릭한 언어 렌더링
+            console.log('클릭한 언어 렌더링...');
+            const selectedLang = document.querySelector('.SelectedLanguage')
+            const ul = selectedLang.children[0]
+            const li = document.createElement('li')
+            // li 태그 안에 클릭한 언어를 문자열로 넣기
+            li.innerText = target.innerText
+            // 클릭한 언어가 이미 렌더링 결과에 있다면, 렌더링 위치를 제일 뒤로 이동
+            for (let i = 0; i < ul.children.length; i++) {
+                if (ul.children[i].innerText === target.innerText) {
+                    const removedNode = ul.removeChild(ul.children[i])
+                    ul.appendChild(removedNode)
+                    return
+                }
+            }
+            // li 태그가 5개 이상이라면 첫번째 언어를 삭제하고 클릭한 언어를 마지막에 추가하기
+            if (ul.children.length >= 5) {
+                ul.removeChild(ul.firstChild)
+                ul.appendChild(li)
+            }
+            // li 태그 중에 중복된 언어도 없고, 5개 미만이라면 ul에 추가
+            else {
+                console.log(ul)
+                ul.appendChild(li)
+            }
 
         })
 
