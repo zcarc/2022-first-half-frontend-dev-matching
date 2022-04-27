@@ -48,6 +48,19 @@
             }
         }
 
+        // 렌더링 결과 클릭 이벤트
+        Suggestion.addEventListener('click', function(event) {
+            const target = event.target
+            const tagName = target.tagName
+            console.log(tagName)
+            // li 태그가 아닐 경우 종료 (li 태그를 벗어난 Suggestion 태그 영역이 클릭되면 종료한다.)
+            if (tagName !== 'LI') {
+                return
+            }
+            alert(target.innerText)
+
+        })
+
         // 키보드 눌렀을 경우(keydown) 이벤트
         window.addEventListener('keydown', function(event) {
             const key = event.key
