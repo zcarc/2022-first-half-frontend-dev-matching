@@ -1,4 +1,5 @@
 import SearchInput from "./SearchInput.js";
+import { fetchLanguages } from "./api.js";
 
 export default function App({ $target }) {
   this.state = {
@@ -13,5 +14,9 @@ export default function App({ $target }) {
   const searchInput = new SearchInput({
     $target,
     initialState: "",
+    onChange: async (keyword) => {
+      const languages = await fetchLanguages(keyword);
+      console.log(languages);
+    },
   });
 }
