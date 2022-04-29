@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <title>2022 FE 데브매칭</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <main class="App">
+      <div class="SelectedLanguage"></div>
+    </main>
+
+    <!-- 
+      아래의 모든 테스트는 Live Server를 통해서 index_test.html을 실행한 결과이다.
+      모듈은 로컬 파일에서 동작하지 않고, HTTP 또는 HTTPS 프로토콜을 통해서만 동작한다.
+      로컬에서 file:// 프로토콜을 사용해 웹페이지를 열면 import, export 지시자가 동작하지 않는다.
+      참고: https://ko.javascript.info/modules-intro 
+    -->
+
+    <!-- 테스트 1 -->
+    <!-- 정상적으로 동작한다. -->
+    <!-- <script src="./index_test.js" type="module"></script> -->
+
+    <!-- 테스트 2 -->
+    <!-- 오류는 나지 않지만 index_text.html를 브라우저로 열어서 콘솔에서 App과 test 를 호출하면 다음과 같은 에러가 발생한다. -->
+    <!-- Uncaught ReferenceError: App is not defined -->
+    <!-- Uncaught ReferenceError: test is not defined -->
+    <!-- <script src="./App_test.js" type="module"></script> -->
+
+    <!-- 테스트 3 -->
+    <!-- 이렇게 src 경로를 지정하지 않고 script 안에서 App_test.js 모듈을 가져오고 export 된 변수들을 import 하고 호출하면 정상 동작된다. -->
+    <!--         
+      <script type="module">
+        import { test1, test2 } from "./App_test.js";
+
+        test1();
+        test2();
+      </script>  
+    -->
+
+    <!-- 테스트 4 -->
+    <!-- 
+      function App({ $target }) { ... } 
+      test2는 App_text.js의 test2 변수가 아니라 export default 의 App 함수다.
+      여기서 test2()를 호출하면 해당 App() 함수를 호출하게 되는데
+      $target을 객체 또는 배열로 특정 값을 구조 분해 할당으로 $target 변수에 할당해야하는데 아무런 인수도 없으니 아래와 같은 에러가 발생한다. 
+      참고: https://ko.javascript.info/destructuring-assignment
+    -->
+    <!-- Uncaught TypeError: Cannot destructure property '$target' of 'undefined' as it is undefined. -->
+    <!-- 
+      <script type="module">
+        import test2 from "./App_test.js";
+
+        test2();
+      </script>
+     -->
+
+    <!-- 테스트 5 -->
+    <!-- type="module"을 설정하지 않으면 다음과 같은 에러가 발생한다. -->
+    <!-- Uncaught SyntaxError: Unexpected token 'export' -->
+    <!-- <script src="./App_test.js"></script> -->
+
+    <!-- 테스트 6 -->
+    <!-- type="module"을 설정하지 않으면 다음과 같은 에러가 발생한다. -->
+    <!-- Uncaught SyntaxError: Cannot use import statement outside a module -->
+    <!-- <script src="./index_test.js"></script> -->
+  </body>
+</html>
