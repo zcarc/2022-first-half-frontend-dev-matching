@@ -20,4 +20,10 @@ import App from "./App_test.js";
 // 테스트 4
 // 구조 분해 할당을 사용하지 않고 인수를 전달하는 경우,
 // App 함수에서 파라미터를 받을 때 중괄호를 생략해야한다.
-new App(document.querySelector(".App"));
+// new App(document.querySelector(".App"));
+
+// 테스트 5
+// 구조 분해 할당으로 변수명을 지정해서 인수로 전달할 경우
+// 함수의 파라미터에서는 인수로 전달된 그 변수명과 동일해야하는가?
+// YES, 일치해야한다.
+new App({ $target: document.querySelector(".App") });
