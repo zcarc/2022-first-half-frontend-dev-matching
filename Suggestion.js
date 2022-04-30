@@ -1,4 +1,4 @@
-export default function Suggestion({ $target, initialState }) {
+export default function Suggestion({ $target, initialState, onSelect }) {
   this.$element = document.createElement("div");
   this.$element.className = "Suggestion";
   $target.appendChild(this.$element);
@@ -53,4 +53,35 @@ export default function Suggestion({ $target, initialState }) {
   };
 
   this.render();
+
+  // 키보드 이벤트
+  window.addEventListener("keyup", (e) => {
+    if (this.state.items.length > 0) {
+      const { selectedIndex } = this.setState;
+      const lastIndex = this.state.items.length - 1;
+      const navigationKeys = ["ArrowUp", "ArrowDown"];
+      let nextIndex = selectedIndex;
+
+      // Array.prototype.includes(): 배열이 특정 요소를 포함하고 있는지 판별한다.
+      // e.key(입력된 키 값) 가 "ArrowUp" 또는 "ArrowDown" 일 때 참이된다.
+      // 참고:
+      // https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+      if (navigationKeys.includes(e.key)) {
+        // 키보드 화살표 위
+        if (e.key === "ArrowUp") {
+          // 선택된 인덱스가 0이면 마지막 인덱스 선택 아니라면 이전 인덱스 선택
+          nextIndex = selectedIndex === 0 ? lastIndex : nextIndex - 1;
+          // 키보드 화살표 아래
+        } else if (e.key === "ArrowDown") {
+          // 선택된 인덱스가 마지막 인덱스면 첫번째 인덱스인 0을 선택 아니라면 다음 인덱스 선택
+          nextIndex = selectedIndex === lastIndex ? 0 : nextIndex + 1;
+        }
+
+        this.setState({
+          ...this.state,
+          selectedIndex: nextIndex,
+        });
+      }
+    }
+  });
 }
