@@ -57,7 +57,7 @@ export default function Suggestion({ $target, initialState, onSelect }) {
   // 키보드 이벤트
   window.addEventListener("keyup", (e) => {
     if (this.state.items.length > 0) {
-      const { selectedIndex } = this.setState;
+      const { selectedIndex } = this.state;
       const lastIndex = this.state.items.length - 1;
       const navigationKeys = ["ArrowUp", "ArrowDown"];
       let nextIndex = selectedIndex;

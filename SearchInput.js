@@ -15,6 +15,16 @@ export default function SearchInput({ $target, initialState, onChange }) {
 
   // 이벤트 핸들러
   this.$element.addEventListener("keyup", (e) => {
-    onChange(e.target.value);
+    const actionIgnoreKeys = [
+      "Enter",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+    ];
+
+    if (!actionIgnoreKeys.includes(e.key)) {
+      onChange(e.target.value);
+    }
   });
 }

@@ -168,3 +168,53 @@ document.querySelector(".SelectedLanguage").firstChild;
 ```js
 document.querySelector(".SelectedLanguage").children[0];
 ```
+
+# Problem Explanation - Troubleshooting
+
+## 버그 발생1: 커서 초기화 문제 - 화살표 위, 아래 키 입력으로 selectedIndex 변경
+
+### 오타 수정
+
+```js
+const { selectedIndex } = this.setState;
+```
+
+이 부분에서 setState를 구조분해할당하고 있었기 때문에 selectedIndex를 가져올 수 없었다.
+그래서 다음과 같이 수정을 했다.
+
+```js
+const { selectedIndex } = this.state;
+```
+
+하지만 이렇게 수정해도 순회가 되지 않은 문제는 그대로였다.
+
+### 순회 시, 0번째로 돌아오는 현상
+
+```js
+// SearchInput.js
+this.$element.addEventListener("keyup", (e) => {
+  onChange(e.target.value);
+});
+```
+
+input에서 검색할 언어를 입력하는데 화살표도 현재 키보드 이벤트에서 인식하기 때문에
+해당 화살표 키로 API를 호출하게 되어 Suggestion이 렌더링 되어 순회가 안되는 것이다.
+그래서 화살표 키를 입력했을 때는 onChange 이벤트를 발생시키지 않는 것으로 해결했다.
+
+```js
+this.$element.addEventListener("keyup", (e) => {
+  const actionIgnoreKeys = [
+    "Enter",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+  ];
+
+  if (!actionIgnoreKeys.includes(e.key)) {
+    onChange(e.target.value);
+  }
+});
+```
+
+e.key가 actionIgnoreKeys에 포함되지 않는 경우에만 onChange 함수를 호출하도록 해서 문제를 해결했다.
