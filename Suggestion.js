@@ -5,11 +5,16 @@ export default function Suggestion({ $target, initialState }) {
 
   // Suggestion으로 전달되는 인수는 다음과 같다
   // new Suggestion({ $target, initialState: { items: [] } })
-  this.state = initialState;
+  this.state = {
+    selectedIndex: 0,
+    items: initialState.items,
+  };
 
   this.setState = (nextState) => {
-    console.log("Seggestion... setState... nextState: ", nextState);
-    this.state = nextState;
+    this.state = {
+      ...this.state,
+      ...nextState,
+    };
     this.render();
   };
 
