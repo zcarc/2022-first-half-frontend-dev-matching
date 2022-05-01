@@ -1,13 +1,12 @@
 <html>
-
-<head>
+  <head>
     <title>2022 FE 데브매칭</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
 
-<body>
+  <body>
     <main class="App">
-        <!-- 
+      <!-- 
         <div class="SelectedLanguage">
             <ul>
                 <li>JavaScript</li>
@@ -18,13 +17,17 @@
             </ul>
         </div> 
         -->
-        <div class="SelectedLanguage">
-            <ul></ul>
-        </div> 
-        <form class="SearchInput">
-            <input class="SearchInput__input" type="text" placeholder="프로그램 언어를 입력하세요.">
-        </form>
-        <!-- 
+      <div class="SelectedLanguage">
+        <ul></ul>
+      </div>
+      <form class="SearchInput">
+        <input
+          class="SearchInput__input"
+          type="text"
+          placeholder="프로그램 언어를 입력하세요."
+        />
+      </form>
+      <!-- 
         <div class="Suggestion">
             <ul>
                 <li class="Suggestion__item--selected">Action<span class="Suggestion__item--matched">Script</span></li>
@@ -36,155 +39,186 @@
         -->
     </main>
     <script>
+      const api =
+        "https://wr4a6p937i.execute-api.ap-northeast-2.amazonaws.com/dev";
+      const input = document.querySelector(".SearchInput__input");
+      const App = document.querySelector(".App");
+      const Suggestion = document.createElement("div");
+      Suggestion.classList.add("Suggestion");
 
-        const api = 'https://wr4a6p937i.execute-api.ap-northeast-2.amazonaws.com/dev'
-        const input = document.querySelector(".SearchInput__input")
-        const App = document.querySelector('.App')
-        const Suggestion = document.createElement('div')
-        Suggestion.classList.add('Suggestion')
-
-        // 자식노드 삭제 함수 (Suggestion, ul)
-        const remove_child_elements = () => {
-            if (Suggestion.childNodes.length > 0 && Suggestion.childNodes[0].nodeName.toLowerCase() === 'ul') {
-                Suggestion.removeChild(Suggestion.firstChild)
-            }
-            if (App.contains(Suggestion)) {
-                App.removeChild(Suggestion)
-            }
+      // 자식노드 삭제 함수 (Suggestion, ul)
+      const remove_child_elements = () => {
+        if (
+          Suggestion.childNodes.length > 0 &&
+          Suggestion.childNodes[0].nodeName.toLowerCase() === "ul"
+        ) {
+          Suggestion.removeChild(Suggestion.firstChild);
         }
+        if (App.contains(Suggestion)) {
+          App.removeChild(Suggestion);
+        }
+      };
 
-        // 렌더링 결과 클릭 이벤트
-        Suggestion.addEventListener('click', function(event) {
-            const target = event.target
-            const tagName = target.tagName
-            console.log(tagName)
-            // li 태그가 아닐 경우 종료 (li 태그를 벗어난 Suggestion 태그 영역이 클릭되면 종료한다.)
-            if (tagName !== 'LI') {
-                return
-            }
-            // 클릭한 언어의 문자열만 alert으로 띄우기
-            alert(target.innerText)
+      // 클릭 or 엔터로 선택한 언어 렌더링
+      const renderSelectedLanguage = (target) => {
+        console.log("클릭한 언어 렌더링...");
+        const selectedLang = document.querySelector(".SelectedLanguage");
+        const ul = selectedLang.children[0];
+        const li = document.createElement("li");
+        // li 태그 안에 클릭한 언어를 문자열로 넣기
+        li.innerText = target.innerText;
+        // 클릭한 언어가 이미 렌더링 결과에 있다면, 렌더링 위치를 제일 뒤로 이동
+        for (let i = 0; i < ul.children.length; i++) {
+          if (ul.children[i].innerText === target.innerText) {
+            const removedNode = ul.removeChild(ul.children[i]);
+            ul.appendChild(removedNode);
+            return;
+          }
+        }
+        // li 태그가 5개 이상이라면 첫번째 언어를 삭제하고 클릭한 언어를 마지막에 추가하기
+        if (ul.children.length >= 5) {
+          ul.removeChild(ul.firstChild);
+          ul.appendChild(li);
+        }
+        // li 태그 중에 중복된 언어도 없고, 5개 미만이라면 ul에 추가
+        else {
+          console.log(ul);
+          ul.appendChild(li);
+        }
+      };
 
-            // 클릭한 언어 렌더링
-            console.log('클릭한 언어 렌더링...');
-            const selectedLang = document.querySelector('.SelectedLanguage')
-            const ul = selectedLang.children[0]
-            const li = document.createElement('li')
-            // li 태그 안에 클릭한 언어를 문자열로 넣기
-            li.innerText = target.innerText
-            // 클릭한 언어가 이미 렌더링 결과에 있다면, 렌더링 위치를 제일 뒤로 이동
-            for (let i = 0; i < ul.children.length; i++) {
-                if (ul.children[i].innerText === target.innerText) {
-                    const removedNode = ul.removeChild(ul.children[i])
-                    ul.appendChild(removedNode)
-                    return
-                }
-            }
-            // li 태그가 5개 이상이라면 첫번째 언어를 삭제하고 클릭한 언어를 마지막에 추가하기
-            if (ul.children.length >= 5) {
-                ul.removeChild(ul.firstChild)
-                ul.appendChild(li)
-            }
-            // li 태그 중에 중복된 언어도 없고, 5개 미만이라면 ul에 추가
-            else {
-                console.log(ul)
-                ul.appendChild(li)
-            }
+      // 렌더링 결과 클릭 이벤트
+      Suggestion.addEventListener("click", function (event) {
+        const target = event.target;
+        const tagName = target.tagName;
+        console.log(tagName);
+        // li 태그가 아닐 경우 종료 (li 태그를 벗어난 Suggestion 태그 영역이 클릭되면 종료한다.)
+        if (tagName !== "LI") {
+          return;
+        }
+        // 클릭한 언어의 문자열만 alert으로 띄우기
+        alert(target.innerText);
 
-        })
+        // 클릭한 언어 렌더링
+        renderSelectedLanguage(target);
+      });
 
-        // 키보드 눌렀을 경우(keydown) 이벤트
-        window.addEventListener('keydown', function(event) {
-            const key = event.key
-            if (key === 'ArrowUp' || key === 'ArrowDown') {
-                console.log(key)
-                // Suggestion의 자식노드가 있을 경우
-                if (Suggestion.hasChildNodes()) {
-                    let ul = Suggestion.firstChild
-                    // ul에 자식노드가 있을 경우
-                    if (ul.hasChildNodes()) {
-                        // selected 클래스가 있는 자식노드 li를 찾기 위해서 순회
-                        for (let i = 0; i < ul.childNodes.length; i++) {
-                            const childNode = ul.childNodes[i]
-                            const selected_class_name = 'Suggestion__item--selected'
-                            // selected 클래스가 있는 노드일 경우
-                            if (childNode.className === selected_class_name) {
-                                // 자식노드가 1개라면 다음 노드를 순회할 필요가 없어서 2개 이상인 경우
-                                if (ul.childNodes.length >= 2) {
-                                    childNode.classList.remove(selected_class_name)
-                                    // 위쪽 방향키일 경우
-                                    if (key === 'ArrowUp') {
-                                        // 이전 노드가 존재한다면 그 노드에 선택 클래스 추가
-                                        if (childNode.previousElementSibling !== null) {
-                                            childNode.previousElementSibling.classList.add(selected_class_name)
-                                        }
-                                        // 이전 노드가 없다면 마지막 노드에 선택 클래스 추가
-                                        else if (childNode.previousElementSibling === null) {
-                                            ul.lastChild.classList.add(selected_class_name)
-                                        }
-                                    }
-                                    // 아래쪽 방향키일 경우
-                                    else if (key === 'ArrowDown') {
-                                        // 다응 노드가 존재한다면 그 노드에 선택 클래스 추가
-                                        if (childNode.nextElementSibling !== null) {
-                                            childNode.nextElementSibling.classList.add(selected_class_name)
-                                        }
-                                        // 다음 노드가 없다면 첫번째 노드에 선택 클래스 추가
-                                        else if (childNode.nextElementSibling === null) {
-                                            ul.firstChild.classList.add(selected_class_name)
-                                        }
-                                    }
-                                }
-                                break
-                            }
+      // 키보드 눌렀을 경우(keydown) 이벤트
+      window.addEventListener("keydown", function (event) {
+        const key = event.key;
+        if (key === "ArrowUp" || key === "ArrowDown" || key === "Enter") {
+          console.log(key);
+          // Suggestion의 자식노드가 있을 경우
+          if (Suggestion.hasChildNodes()) {
+            let ul = Suggestion.firstChild;
+            // ul에 자식노드가 있을 경우
+            if (ul.hasChildNodes()) {
+              if (key === "ArrowUp" || key === "ArrowDown") {
+                // selected 클래스가 있는 자식노드 li를 찾기 위해서 순회
+                for (let i = 0; i < ul.childNodes.length; i++) {
+                  const childNode = ul.childNodes[i];
+                  const selected_class_name = "Suggestion__item--selected";
+                  // selected 클래스가 있는 노드일 경우
+                  if (childNode.className === selected_class_name) {
+                    // 자식노드가 1개라면 다음 노드를 순회할 필요가 없어서 2개 이상인 경우
+                    if (ul.childNodes.length >= 2) {
+                      childNode.classList.remove(selected_class_name);
+                      // 위쪽 방향키일 경우
+                      if (key === "ArrowUp") {
+                        // 이전 노드가 존재한다면 그 노드에 선택 클래스 추가
+                        if (childNode.previousElementSibling !== null) {
+                          childNode.previousElementSibling.classList.add(
+                            selected_class_name
+                          );
                         }
-
-                    }
-                }
-            }
-        })
-
-        // 인풋 입력 이벤트
-        input.addEventListener('input', function(event) {
-            console.log('인풋 이벤트 발생... input: ', input);
-            console.log('인풋 값 가져오기... input.value: ', input.value);
-            // 인풋에 값이 존재하는 경우 API로 검색
-            if (input.value) {
-                console.log('인풋에 값이 존재합니다.')
-                fetch(`${api}/languages?keyword=${input.value}`)
-                .then(res => res.json())
-                .then(res => {
-                    // li 노드가 누적되어 저장될 수 있으므로 자식노드 전부 삭제
-                    remove_child_elements()
-                    // API 검색결과가 1개 이상일 경우
-                    if (res.length > 0) {
-                        console.log('API에서 검색 값을 찾았습니다: ', res)
-                        App.append(Suggestion)
-                        const ul = document.createElement('ul')
-                        Suggestion.append(ul)
-                        for (i = 0; i < res.length; i++) {
-                            console.log('res[i]', res[i])
-                            const li = document.createElement('li')
-                            if (i === 0) {
-                                li.classList.add('Suggestion__item--selected')
-                            }
-                            li.innerText = res[i]
-                            ul.append(li)
+                        // 이전 노드가 없다면 마지막 노드에 선택 클래스 추가
+                        else if (childNode.previousElementSibling === null) {
+                          ul.lastChild.classList.add(selected_class_name);
                         }
-                    // API 검색결과가 없을 경우
-                    } else {
-                        console.log('API에서 검색 값을 찾지 못했습니다.')
+                      }
+                      // 아래쪽 방향키일 경우
+                      else if (key === "ArrowDown") {
+                        // 다응 노드가 존재한다면 그 노드에 선택 클래스 추가
+                        if (childNode.nextElementSibling !== null) {
+                          childNode.nextElementSibling.classList.add(
+                            selected_class_name
+                          );
+                        }
+                        // 다음 노드가 없다면 첫번째 노드에 선택 클래스 추가
+                        else if (childNode.nextElementSibling === null) {
+                          ul.firstChild.classList.add(selected_class_name);
+                        }
+                      }
                     }
-                })
-                .catch(error => console.error(error))
-            // 인풋에 값이 없는 경우
-            } else {
-                // 검색할 값이 없으므로 전부 삭제
-                remove_child_elements()
+                    break;
+                  }
+                }
+              } else if (key === "Enter") {
+                // 현재 선택된 언어
+                const selected = document.querySelector(
+                  ".Suggestion__item--selected"
+                );
+                alert(selected.innerText);
+                // 엔터로 선택한 언어 렌더링
+                renderSelectedLanguage(selected);
+              }
             }
-            
-        })
+          }
+        }
+      });
+
+      // 인풋 엔터 입력 무시
+      // form 안에 input이 한개만 있을 경우 엔터를 누르면 form이 submit 된다.
+      // 해결방법으로는 input을 2개 이상으로 만들거나 input에서 엔터를 눌렀을 때 event를 막아야한다.
+      // 참고:
+      // https://ggmouse.tistory.com/98
+      // https://webisfree.com/2017-08-07/input-입력폼-엔터키-누를-경우-submit-막기-prevent
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+        }
+      });
+
+      // 인풋 입력 이벤트
+      input.addEventListener("input", function (event) {
+        console.log("인풋 이벤트 발생... input: ", input);
+        console.log("인풋 값 가져오기... input.value: ", input.value);
+        console.log("인풋 event: ", event);
+        // 인풋에 값이 존재하는 경우 API로 검색
+        if (input.value) {
+          console.log("인풋에 값이 존재합니다.");
+          fetch(`${api}/languages?keyword=${input.value}`)
+            .then((res) => res.json())
+            .then((res) => {
+              // li 노드가 누적되어 저장될 수 있으므로 자식노드 전부 삭제
+              remove_child_elements();
+              // API 검색결과가 1개 이상일 경우
+              if (res.length > 0) {
+                console.log("API에서 검색 값을 찾았습니다: ", res);
+                App.append(Suggestion);
+                const ul = document.createElement("ul");
+                Suggestion.append(ul);
+                for (i = 0; i < res.length; i++) {
+                  console.log("res[i]", res[i]);
+                  const li = document.createElement("li");
+                  if (i === 0) {
+                    li.classList.add("Suggestion__item--selected");
+                  }
+                  li.innerText = res[i];
+                  ul.append(li);
+                }
+                // API 검색결과가 없을 경우
+              } else {
+                console.log("API에서 검색 값을 찾지 못했습니다.");
+              }
+            })
+            .catch((error) => console.error(error));
+          // 인풋에 값이 없는 경우
+        } else {
+          // 검색할 값이 없으므로 전부 삭제
+          remove_child_elements();
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>
