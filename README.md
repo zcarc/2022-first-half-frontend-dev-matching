@@ -168,3 +168,44 @@ document.querySelector(".SelectedLanguage").firstChild;
 ```js
 document.querySelector(".SelectedLanguage").children[0];
 ```
+## 렌더링 결과에서 순회 중 엔터로 선택 시 새로고침 문제
+
+렌더링 결과를 순회하면서 엔터를 누르면 언어를 .SelectedLanguage 에 렌더링할 때 문제가 발생했다.
+이 문제는 엔터를 input에서 keyUp, keyDown 로 언어를 순회할 때는 문제가 없었지만
+Enter를 눌렀을 때, .Suggestion\_\_item--selected 로 선택된 언어가 alert에 정상적으로 호출됐지만 그 이후에 렌더링되지 않고 계속 새로고침이 되었다.
+
+```js
+<form class="SearchInput">
+  <input
+    class="SearchInput__input"
+    type="text"
+    placeholder="프로그램 언어를 입력하세요."
+  />
+</form>
+```
+
+form 안에 input이 한개가 있다면 input에서 엔터를 누르면 자동으로 form이 submit이 되는 것이었다. 그래서 새로고침을 막기 위해서는 input을 2개 이상으로 만들거나 해당 input에서 Enter를 누를 시 해당 이벤트를 막는 방법으로 해결 할 수 있다.
+
+```js
+<form class="SearchInput">
+  <input type="text" />
+  <input
+    class="SearchInput__input"
+    type="text"
+    placeholder="프로그램 언어를 입력하세요."
+  />
+</form>
+```
+
+이렇게 form 안에 input이 2개 이상이면 어떤 input에서도 엔터를 누르면 submit이 동작하지 않는다.
+나는 이 방법은 input을 새로 추가해야하기 때문에 사용하지 않고 해당 input에서 엔터를 눌렀을 때 이벤트를 막는 방법으로 submit이 동작하지 않도록 했다.
+
+```js
+input.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+  }
+});
+```
+
+input에 keydown 이벤트를 추가해서 만약 enter를 눌렀다면 form에 input이 한개가 있을 때 submit 이벤트가 기본 동작하기 때문에 그 기본 동작을 막기 위해 event.preventDefault()를 호출해서 문제를 해결했다.
