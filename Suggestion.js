@@ -59,7 +59,7 @@ export default function Suggestion({ $target, initialState, onSelect }) {
     if (this.state.items.length > 0) {
       const { selectedIndex } = this.state;
       const lastIndex = this.state.items.length - 1;
-      const navigationKeys = ["ArrowUp", "ArrowDown"];
+      const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
       let nextIndex = selectedIndex;
 
       // Array.prototype.includes(): 배열이 특정 요소를 포함하고 있는지 판별한다.

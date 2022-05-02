@@ -171,7 +171,7 @@ document.querySelector(".SelectedLanguage").children[0];
 
 # Problem Explanation - Troubleshooting
 
-## 버그 발생1: 커서 초기화 문제 - 화살표 위, 아래 키 입력으로 selectedIndex 변경
+## 버그 발생 1: 커서 초기화 문제 - 화살표 위, 아래 키 입력으로 selectedIndex 변경
 
 ### 오타 수정
 
@@ -218,3 +218,40 @@ this.$element.addEventListener("keyup", (e) => {
 ```
 
 e.key가 actionIgnoreKeys에 포함되지 않는 경우에만 onChange 함수를 호출하도록 해서 문제를 해결했다.
+
+## 버그 발생 2: 화면 새로고침 문제 - 현재 커서가 가리키는 언어를 selectedLanguages에 추가
+
+### 커서가 가리키는 언어에서 엔터를 입력했을 때, 새로고침이 되는 문제 발생
+
+SearchInput의 컴포넌트의 input은 form 태그로 감싸져있는데 form 태그 내 input에 focus가 있는 상태에서
+엔터키를 입력하면 form의 action에 지정된 url로 화면을 이동하게 된다.
+
+```js
+<form>
+  <input type="text" />
+</form>
+```
+
+```js
+<form action="">
+  <input type="text" />
+</form>
+```
+
+```js
+<form action="http://127.0.0.1:5500/index.html">
+  <input type="text" />
+</form>
+```
+
+form에서 action 속성이 없거나 속성의 값이 빈 문자열이면 문서의 주소, 즉 같은 페이지로 form이 submitted 된다.
+위의 3개의 코드 블럭은 모두 동일한 url로 이동하게 된다.
+
+```js
+// SearchInput.js
+this.$element.addEventListener("submit", (e) => {
+  e.preventDefault();
+});
+```
+
+그래서 form의 submit 이벤트를 막는 방법으로 event.prevantDefualt() 메서드를 호출하는 것으로 문제를 해결할 수 있다.
