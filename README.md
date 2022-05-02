@@ -3,13 +3,13 @@
 - [x] fetch만 사용해서 API 조회
 - [x] input에 값을 입력하면 API 조회
 - [x] 조회된 결과를 렌더링
-- [ ] 렌더링된 결과 방향키 위, 아래로 순회해서 selected 클래스 추가
-- [ ] 순회 시 검색 X
-- [ ] 첫번째 노드에서 이전 노드로 순회할 경우 마지막 노드로 순회
-- [ ] 마지막 노드에서 다음 노드로 순회할 경우 첫번째 노드로 순회
-- [ ] 언어 선택 처리
-- [ ] 단순히 선택된 검색어에 대해 alert 띄우기
-- [ ] 다른 문자열 첨가 없이 언어명만 alert으로 띄우기
+- [x] 렌더링된 결과 방향키 위, 아래로 순회해서 selected 클래스 추가
+- [x] 순회 시 검색 X
+- [x] 첫번째 노드에서 이전 노드로 순회할 경우 마지막 노드로 순회
+- [x] 마지막 노드에서 다음 노드로 순회할 경우 첫번째 노드로 순회
+- [x] 언어 선택 처리
+- [x] 커서가 위치한 추천 검색어에서 엔터 입력 시 alert 띄우기
+- [x] 다른 문자열 첨가 없이 언어명만 alert으로 띄우기
 - [ ] 클릭된 언어 렌더링
 - [ ] 이미 선택된 언어를 다시 검색하여 선택하여도 중복처리 X
 - [ ] 이미 선택된 언어를 다시 삽입하면 순서상 맨 뒤에 삽입
@@ -168,6 +168,7 @@ document.querySelector(".SelectedLanguage").firstChild;
 ```js
 document.querySelector(".SelectedLanguage").children[0];
 ```
+
 ## 렌더링 결과에서 순회 중 엔터로 선택 시 새로고침 문제
 
 렌더링 결과를 순회하면서 엔터를 누르면 언어를 .SelectedLanguage 에 렌더링할 때 문제가 발생했다.
@@ -209,3 +210,90 @@ input.addEventListener("keydown", function (event) {
 ```
 
 input에 keydown 이벤트를 추가해서 만약 enter를 눌렀다면 form에 input이 한개가 있을 때 submit 이벤트가 기본 동작하기 때문에 그 기본 동작을 막기 위해 event.preventDefault()를 호출해서 문제를 해결했다.
+
+# Problem Explanation - Troubleshooting
+
+## 버그 발생 1: 커서 초기화 문제 - 화살표 위, 아래 키 입력으로 selectedIndex 변경
+
+### 오타 수정
+
+```js
+const { selectedIndex } = this.setState;
+```
+
+이 부분에서 setState를 구조분해할당하고 있었기 때문에 selectedIndex를 가져올 수 없었다.
+그래서 다음과 같이 수정을 했다.
+
+```js
+const { selectedIndex } = this.state;
+```
+
+하지만 이렇게 수정해도 순회가 되지 않은 문제는 그대로였다.
+
+### 순회 시, 0번째로 돌아오는 현상
+
+```js
+// SearchInput.js
+this.$element.addEventListener("keyup", (e) => {
+  onChange(e.target.value);
+});
+```
+
+input에서 검색할 언어를 입력하는데 화살표도 현재 키보드 이벤트에서 인식하기 때문에
+해당 화살표 키로 API를 호출하게 되어 Suggestion이 렌더링 되어 순회가 안되는 것이다.
+그래서 화살표 키를 입력했을 때는 onChange 이벤트를 발생시키지 않는 것으로 해결했다.
+
+```js
+this.$element.addEventListener("keyup", (e) => {
+  const actionIgnoreKeys = [
+    "Enter",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+  ];
+
+  if (!actionIgnoreKeys.includes(e.key)) {
+    onChange(e.target.value);
+  }
+});
+```
+
+e.key가 actionIgnoreKeys에 포함되지 않는 경우에만 onChange 함수를 호출하도록 해서 문제를 해결했다.
+
+## 버그 발생 2: 화면 새로고침 문제 - 현재 커서가 가리키는 언어를 selectedLanguages에 추가
+
+### 커서가 가리키는 언어에서 엔터를 입력했을 때, 새로고침이 되는 문제 발생
+
+SearchInput의 컴포넌트의 input은 form 태그로 감싸져있는데 form 태그 내 input에 focus가 있는 상태에서
+엔터키를 입력하면 form의 action에 지정된 url로 화면을 이동하게 된다.
+
+```js
+<form>
+  <input type="text" />
+</form>
+```
+
+```js
+<form action="">
+  <input type="text" />
+</form>
+```
+
+```js
+<form action="http://127.0.0.1:5500/index.html">
+  <input type="text" />
+</form>
+```
+
+form에서 action 속성이 없거나 속성의 값이 빈 문자열이면 문서의 주소, 즉 같은 페이지로 form이 submitted 된다.
+위의 3개의 코드 블럭은 모두 동일한 url로 이동하게 된다.
+
+```js
+// SearchInput.js
+this.$element.addEventListener("submit", (e) => {
+  e.preventDefault();
+});
+```
+
+그래서 form의 submit 이벤트를 막는 방법으로 event.prevantDefualt() 메서드를 호출하는 것으로 문제를 해결할 수 있다.
