@@ -75,6 +75,10 @@ export default function Suggestion({ $target, initialState, onSelect }) {
         } else if (e.key === "ArrowDown") {
           // 선택된 인덱스가 마지막 인덱스면 첫번째 인덱스인 0을 선택 아니라면 다음 인덱스 선택
           nextIndex = selectedIndex === lastIndex ? 0 : nextIndex + 1;
+          // 엔터키 입력 시
+        } else if (e.key === "Enter") {
+          // 현재 커서에 위치한 언어의 인덱스를 인수로 전달
+          onSelect(this.state.items[this.state.selectedIndex]);
         }
 
         this.setState({
