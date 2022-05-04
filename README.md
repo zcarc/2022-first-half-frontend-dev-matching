@@ -316,9 +316,11 @@ Array.prototype.slice() 메서드는 start 인덱스부터 end 인덱스까지�
 
 ### 문법
 
-slice()
-slice(start)
-slice(start, end)
+```js
+slice();
+slice(start);
+slice(start, end);
+```
 
 ### 매개변수
 
