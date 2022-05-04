@@ -335,9 +335,14 @@ nextSelectedLanguages.splice(index, 1);
 Array.prototype.splice() 메서드는 배열의 기존 요소를 삭제 또는 교체하거나 새 요소를 추가하여 배열의 내용을 변경한다. 원본 배열의 요소가 바뀐다.
 즉, 이 메서드를 사용하면 요소 추가, 삭제, 교체가 모두 가능하다.
 
-구문
+문법
 
-array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+```js
+splice(start);
+splice(start, deleteCount);
+splice(start, deleteCount, item1);
+splice(start, deleteCount, item1, item2, itemN);
+```
 
 매개변수
 
@@ -358,9 +363,11 @@ Array.prototype.slice() 메서드는 start 인덱스부터 end 인덱스까지�
 
 ### 문법
 
-slice()
-slice(start)
-slice(start, end)
+```js
+slice();
+slice(start);
+slice(start, end);
+```
 
 ### 매개변수
 
