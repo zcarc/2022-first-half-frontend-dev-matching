@@ -88,4 +88,33 @@ export default function Suggestion({ $target, initialState, onSelect }) {
       }
     }
   });
+
+  // 마우스 클릭 이벤트
+  this.$element.addEventListener("click", (e) => {
+    console.log("e: ", e);
+    // Element.closest() 는 자기자신을 포함하여 CSS 선택자와 일치하는 가장 가까운 조상요소를 찾는다.
+    // 탐색 범위는 자신부터 문서루트까지 이동하고 조건에 만족하지 않는다면 null 값을 반환한다.
+
+    // e.target 은 Suggestion 에서 click 된 엘리먼트를 의미한다.
+    // 만약 li 엘리먼트를 클릭했다면 해당 엘리먼트가 target이 되고
+    // .closest("li")로 가장 가까운 li 엘리먼트를 찾는데 가장 가까운 엘리먼트가 자기자신이 되므로 클릭된 li 엘리먼트가 반환된다.
+
+    // 참고
+    // https://ko.javascript.info/searching-elements-dom
+    // https://developer.mozilla.org/ko/docs/Web/API/Element/closest
+    const $li = e.target.closest("li");
+    console.log(
+      "suggestion을 선택했을 때 가장 가까운 li 엘리먼트... $li: ",
+      $li
+    );
+    if ($li) {
+      console.log("가장 가까운 li 엘리먼트가 있다. $li.dataset: ", $li.dataset);
+      const { index } = $li.dataset;
+      try {
+        onSelect(this.state.items[parseInt(index)]);
+      } catch (e) {
+        alert("무언가 잘못되었습니다! 선택할 수 없습니다!");
+      }
+    }
+  });
 }
