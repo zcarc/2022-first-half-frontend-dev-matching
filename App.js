@@ -1,6 +1,7 @@
 import SearchInput from "./SearchInput.js";
 import { fetchLanguages } from "./api.js";
 import Suggestion from "./Suggestion.js";
+import SelectedLanguages from "./SelectedLanguages.js";
 
 export default function App({ $target }) {
   this.state = {
@@ -21,14 +22,21 @@ export default function App({ $target }) {
       items: this.state.fetchedLanguages,
     });
 
+    selectedLanguages.setState(this.state.selectedLanguages);
+
     console.log("App... setState... after this.state: ", this.state);
   };
+
+  const selectedLanguages = new SelectedLanguages({
+    $target,
+    initialState: [],
+  });
 
   const searchInput = new SearchInput({
     $target,
     initialState: "",
     onChange: async (keyword) => {
-      console.log("keyword: ", keyword);
+      // 입력한 검색어가 다 지워진 경우에는 fetchLanguages를 초기화 한다.
       if (keyword.length === 0) {
         this.setState({
           fetchedLanguages: [],
