@@ -316,7 +316,7 @@ this.$element.addEventListener("click", (e) => {
 });
 ```
 
-Element.closest() 는 자기자신을 포함하여 CSS 선택자와 일치하는 가장 가까운 조상요소를 찾는다.
+Element.closest() 는 자기자신을 포함하여 CSS 선택자와 일치하는 가장 가까운 부모요소를 찾는다.
 탐색 범위는 자신부터 문서루트까지 이동하고 조건에 만족하지 않는다면 null 값을 반환한다.
 
 e.target 은 Suggestion 에서 click 된 엘리먼트를 의미한다.
