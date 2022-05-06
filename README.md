@@ -335,7 +335,7 @@ nextSelectedLanguages.splice(index, 1);
 Array.prototype.splice() 메서드는 배열의 기존 요소를 삭제 또는 교체하거나 새 요소를 추가하여 배열의 내용을 변경한다. 원본 배열의 요소가 바뀐다.
 즉, 이 메서드를 사용하면 요소 추가, 삭제, 교체가 모두 가능하다.
 
-문법
+### 문법
 
 ```js
 splice(start);
@@ -344,12 +344,12 @@ splice(start, deleteCount, item1);
 splice(start, deleteCount, item1, item2, itemN);
 ```
 
-매개변수
+### 매개변수
 
 첫번째 매개변수는 조작할 요소를 가리키는 인덱스(index)가 된다.
 두번째 매개변수는 deleteCount로 제거할 요소의 개수를 나타낸다.
 
-반환 값
+### 반환 값
 
 제거한 요소를 담은 배열
 하나의 요소만 제거한 경우 길이가 1인 배열이 반환된다.
