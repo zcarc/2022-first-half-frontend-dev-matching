@@ -325,7 +325,39 @@ e.target 은 Suggestion 에서 click 된 엘리먼트를 의미합니다.
 
 ## App의 state에 선택한 언어 추가하기
 
-### Array.prototype.splice()
+```js
+// App.js
+const suggestion = new Suggestion({
+  $target,
+  initialState: {
+    selectedIndex: 0,
+    items: [],
+  },
+  onSelect: (language) => {
+    alert(language);
+
+    const nextSelectedLanguages = [...this.state.selectedLanguages];
+
+    const index = nextSelectedLanguages.findIndex(
+      (selectedLanguage) => selectedLanguage === language
+    );
+
+    if (index > -1) {
+      const removed = nextSelectedLanguages.splice(index, 1);
+    }
+    nextSelectedLanguages.push(language);
+
+    this.setState({
+      ...this.state,
+      selectedLanguages: nextSelectedLanguages,
+    });
+  },
+});
+```
+
+이미 선택된 언어는 마지막으로 이동해야하는 조건이 있어서 state에 이미 선택한 언어가 있다면 해당 언어를 삭제하고 추가합니다.
+
+### Array.prototype.splice() - 복기
 
 ```js
 // App.js
@@ -357,7 +389,47 @@ splice(start, deleteCount, item1, item2, itemN);
 
 ## 5개까지만 선택할 수 있게 하기
 
-### Array.prototype.slice()
+선택한 언어를 출력할 경우 최대 5개까지만 출력합니다.
+
+```js
+// SelectedLanguages.js
+const MAX_DISPLAY_COUNT = 5;
+
+export default function SelectedLanguages({ $target, initialState }) {
+  this.$element = document.createElement("div");
+  this.$element.className = "SelectedLanguage";
+  this.state = initialState;
+
+  $target.appendChild(this.$element);
+
+  this.setState = (nextState) => {
+    this.state = nextState;
+
+    if (this.state.length > MAX_DISPLAY_COUNT) {
+      const startPosition = this.state.length - MAX_DISPLAY_COUNT;
+
+      this.state = this.state.slice(
+        startPosition,
+        MAX_DISPLAY_COUNT + startPosition
+      );
+    }
+
+    this.render();
+  };
+
+  this.render = () => {
+    this.$element.innerHTML = `
+      <ul>
+        ${this.state.map((item) => `<li>${item}</li>`).join("")}
+      </ul>
+      `;
+  };
+
+  this.render();
+}
+```
+
+### Array.prototype.slice() - 복기
 
 Array.prototype.slice() 메서드는 start 인덱스부터 end 인덱스까지의 요소를 얕은 복사한 새로운 배열을 반환합니다. 원본 배열은 바뀌지 않습니다.
 
